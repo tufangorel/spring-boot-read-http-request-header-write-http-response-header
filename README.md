@@ -1,71 +1,40 @@
 ## spring-boot-read-http-request-header-write-http-response-header
 
-Purpose : Enable https port 8443 for the spring boot application. <br/>
-Reason : Provide secure data transfer between rest api and client.  <br/>
+Purpose : Read http request header sent by client to the server. <br/>
+Reason : Add header to the HttpServletResponse sent from server to the client.  <br/>
 
 ### Local run steps <br/>
-1- Generate self signed ssl certificate by using JDK keytool. <br/>
-<pre>
-D:\DEV\ssl>keytool -genkeypair -keypass password -storepass password -keystore serverkeystore -alias custapi -keyalg RSA -validity 365
-What is your first and last name?
-[Unknown]:
-What is the name of your organizational unit?
-[Unknown]:
-What is the name of your organization?
-[Unknown]:
-What is the name of your City or Locality?
-[Unknown]:
-What is the name of your State or Province?
-[Unknown]:
-What is the two-letter country code for this unit?
-[Unknown]:
-Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
-[no]:  yes
-</pre>
-1.1- Export public key from keystore. <br/>
-<pre>
-D:\DEV\ssl\1>keytool -export -alias custapi -keystore serverkeystore -storepass password -rfc -file custapi.crt
-Certificate stored in file <custapi.crt>
-</pre>
-2- Move generated certificate file into your spring boot application resources directory named with "ssl". <br/>
-
-3- Add following properties into application.properties file. <br/>
-<pre>
-server.ssl.key-store-type=PKCS12 <br/>
-server.ssl.key-store=classpath:ssl/serverkeystore <br/>
-server.ssl.key-store-password=password <br/>
-server.ssl.key-alias=custapi <br/>
-server.ssl.enabled=true <br/>
-server.port=8443 <br/>
-</pre>
-4- Start Spring Boot API by running main method containing class CustomerInfoApplication.java in your IDE. <br/>
-5- Alternatively you can start your Docker container by following the commands below. <br/>
+1- Read http header values sent by client to the spring boot REST API. Add "transaction-id" as http request header from POSTMAN request. <br/>
+2- Write http header values sent to the client from the spring boot REST API. Send request-id and correlation-id headers to the client. <br/>
+3- Start Spring Boot REST API by running main method containing class CustomerInfoApplication.java in your IDE. <br/>
+4- Alternatively you can start your Docker container by following the commands below. <br/>
 NOT : Execute maven command from where the pom.xml is located in the project directory to create Spring Boot executable jar. <br/>
 <pre> 
 $ mvn clean install -U -X <br/>
+$ mvn spring-boot:run <br/>
 </pre>
 
-In order to check the https ssl configuration swagger_ui can be accessed via https secure port : <br/>
+swagger_ui can be accessed via https secure port 8443 from localhost : <br/>
 https://localhost:8443/customer-info/swagger-ui/index.html <br/><br/>
 ![https_swagger_ui](doc/https_swagger_ui.png) <br/>
 
 ### Tech Stack
-Java 11 <br/>
-H2 Database Engine <br/>
-spring boot <br/>
-spring boot starter data jpa <br/>
-spring boot starter web <br/>
-spring boot starter test <br/>
-springfox swagger ui <br/>
-springdoc openapi ui <br/>
-spring security web <br/>
-hibernate <br/>
-logback <br/>
-maven <br/>
-hikari connection pool <br/>
-Docker <br/>
-<br/>
-
+<pre>
+Java 11
+H2 Database Engine
+spring boot
+spring boot starter data jpa
+spring boot starter web
+spring boot starter test
+springfox swagger ui
+springdoc openapi ui
+spring security web
+hibernate
+logback
+maven
+hikari connection pool
+Docker
+</pre>
 ### Docker build run steps
 NOT : Execute docker commands from where the DockerFile is located. <br/>
 NOT : Tested on Windows 10 with Docker Desktop Engine Version : 20.10.11 <br/>
@@ -83,24 +52,38 @@ $ docker run -p 8443:8443 -e "SPRING_PROFILES_ACTIVE=dev" demo:latest <br/>
 
 Method : HTTP.POST <br/>
 URL : https://localhost:8443/customer-info/customer/save <br/>
-Request Body : <br/>
-{ <br/>
-&ensp;    "name": "name1", <br/>
-&ensp;    "age": 1, <br/>
-&ensp;    "shippingAddress": { <br/>
-&emsp;        "address": { <br/>
-&emsp;            "streetName": "software", <br/>
-&emsp;            "city": "ankara", <br/>
-&emsp;            "country": "TR" <br/>
-&emsp;        } <br/>
-&ensp;    } <br/>
-} <br/>
+HTTP Request Body : <br/>
+<pre>
+{
+    "name": "name1",
+    "age": 1,
+    "shippingAddress": {
+        "address": {
+            "streetName": "software",
+            "city": "ankara",
+            "country": "TR"
+        }
+    }
+}
+</pre>
+HTTP Request Headers : <br/>
+<pre>
+transaction-id: 123-123-123
+Content-Type: application/json
+User-Agent: PostmanRuntime/7.28.4
+Accept: */*
+Postman-Token: aee7b189-8004-4fd7-a050-bd4e09bba6bd
+Host: localhost:8443
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 206
+</pre>
 
 Curl Request : <br/>
 <pre>
 curl --location --request POST 'https://localhost:8443/customer-info/customer/save' \
+--header 'transaction-id: 123-123-123' \
 --header 'Content-Type: application/json' \
---header 'Cookie: JSESSIONID=5E6B21C9533643F4A7EE462DCBB3B312' \
 --data-raw '{
     "name": "name1",
     "age": 1,
@@ -134,13 +117,23 @@ HTTP response code 200 <br/>
 }
 </pre>
 
+HTTP Response Headers : </br>
+<pre>
+request-id: 68182bbf-996d-4732-a6ff-2c49a90012d1
+correlation-id: 68182bbf-996d-4732-a6ff-2c49a90012d1
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+</pre>
 
 ### List all customers saved to database
 
 Method : HTTP.GET <br/>
 URL : https://localhost:8443/customer-info/customer/list <br/>
 Request Body : <br/>
-{}<br/>
+<pre>
+{}
+</pre>
 Curl Request : <br/>
 <pre>
 curl --location --request GET 'https://localhost:8443/customer-info/customer/list' \
@@ -172,3 +165,11 @@ HTTP response code 200 <br/>
 ]
 </pre>
 <br/>
+HTTP Response Headers : </br>
+<pre>
+request-id: 411b4b33-6af5-4f78-b185-4171e779222d
+correlation-id: 411b4b33-6af5-4f78-b185-4171e779222d
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+</pre>
