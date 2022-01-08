@@ -25,9 +25,11 @@ spring boot
 spring boot starter data jpa
 spring boot starter web
 spring boot starter test
-springfox swagger ui
-springdoc openapi ui
+spring boot starter aop
+spring boot starter actuator
 spring security web
+springdoc openapi ui
+springfox swagger ui
 hibernate
 logback
 maven
