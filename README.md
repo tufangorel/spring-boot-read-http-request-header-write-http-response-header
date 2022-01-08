@@ -4,10 +4,9 @@ Purpose : Read http request header sent by client to the server. <br/>
 Reason : Add header to the HttpServletResponse sent from server to the client.  <br/>
 
 ### Local run steps <br/>
-1- Read http header values sent by client to the spring boot REST API. Add "transaction-id" as http request header from POSTMAN request. <br/>
-2- Write http header values sent to the client from the spring boot REST API. Send request-id and correlation-id headers to the client. <br/>
-3- Start Spring Boot REST API by running main method containing class CustomerInfoApplication.java in your IDE. <br/>
-4- Alternatively you can start your Docker container by following the commands below. <br/>
+1- Add "transaction-id" as http request header from POSTMAN request. <br/>
+2- Start Spring Boot REST API by running main method containing class CustomerInfoApplication.java in your IDE. <br/>
+3- Alternatively you can start your Docker container by following the commands below. <br/>
 NOT : Execute maven command from where the pom.xml is located in the project directory to create Spring Boot executable jar. <br/>
 <pre> 
 $ mvn clean install -U -X <br/>
