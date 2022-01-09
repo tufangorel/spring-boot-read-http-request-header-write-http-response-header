@@ -1,4 +1,4 @@
-package com.company.customerinfo.config;
+package com.company.customerinfo.config.swagger;
 
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
