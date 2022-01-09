@@ -1,7 +1,24 @@
 ## spring-boot-read-http-request-header-write-http-response-header
 
-Purpose : Read http request header sent by client to the server. <br/>
-Reason : Add header to the HttpServletResponse sent from server to the client.  <br/>
+Purpose : Read http request header sent from client to the server into ThreadLocal as current user context data. <br/>
+Reason : Return http response header back to the current HttpServletResponse.  <br/>
+
+Filter, Aspect, Controller and HandlerInterceptor execution order :
+<pre>
+                                                            Client HTTP Request ( POSTMAN  )
+                                                                        &darr;
+                    org.springframework.web.filter.OncePerRequestFilter (com.company.customerinfo.filter.PerRequestFilter) doFilterInternal
+                                                                        &darr;
+                                           javax.servlet.Filter (com.company.customerinfo.filter.RequestFilter) doFilter
+                                                                        &darr;
+                                           javax.servlet.Filter (com.company.customerinfo.filter.ResponseFilter) doFilter
+                                                                        &darr;    
+                                    org.aspectj.lang.annotation.Aspect (com.company.customerinfo.aspect.RequestAspect) beforeAdvice
+                                                                        &darr;
+                org.springframework.web.bind.annotation.RestController (com.company.customerinfo.controller) save(@RequestBody Customer customer)
+                                                                        &darr;
+                    org.springframework.web.servlet.HandlerInterceptor (com.company.customerinfo.interceptor) afterCompletion
+</pre>
 
 ### Local run steps <br/>
 1- Add "transaction-id" as http request header from POSTMAN request. <br/>
