@@ -1,6 +1,6 @@
 package com.company.customerinfo.config.listener;
 
-import com.company.customerinfo.config.DBHealthCheckConfig;
+import com.company.customerinfo.config.datasource.DBHealthCheckConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.company.customerinfo.config;
+package com.company.customerinfo.config.datasource;
 
 
 import com.codahale.metrics.MetricRegistry;

@@ -1,4 +1,4 @@
-package com.company.customerinfo.config;
+package com.company.customerinfo.config.datasource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
