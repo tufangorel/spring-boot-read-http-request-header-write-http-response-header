@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PerformanceAspect {
 
-    private Logger LOGGER = LoggerFactory.getLogger(PerformanceAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceAspect.class);
 
     @Around("execution(* com.company.customerinfo.repository.*.*(..))()")
     public Object measureMethodExecutionTime(ProceedingJoinPoint pjp) throws Throwable {
